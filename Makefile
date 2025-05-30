@@ -6,5 +6,6 @@ LIBS := -L lib -lQBDI
 .PHONY: build
 
 build:
+	mkdir bin
 	$(CC) $(CFLAGS) $(INCLUDES) $(LIBS) -o bin/main.exe src/main.c
 	@cp lib/QBDI.dll bin/QBDI.dll
