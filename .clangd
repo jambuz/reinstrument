@@ -2,4 +2,4 @@ If:
   PathMatch: .*\.c
 
 CompileFlags:
-  Add: [-std=c2x, -fdeclspec, -xc, -Wall, -Wextra,  -I../include ]
+  Add: [-std=c2x, -fdeclspec, -xc, -Wall, -Wextra,  -I../include  ]
