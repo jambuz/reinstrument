@@ -1,11 +1,14 @@
 // needs mingw64-gcc package. and clang + clang extra tools for clangd
+#include <libloaderapi.h>
+#include <windows.h>
+
 #include "QBDI/VM_C.h"
 #include <assert.h>
+#include <processenv.h>
 #include <stdbool.h>
 #include <stdio.h>
 
 #include <QBDI.h>
-#include <windows.h>
 
 #define STACK_SIZE 0x100000
 
@@ -31,6 +34,18 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, // handle to DLL module
     switch (fdwReason)
     {
     case DLL_PROCESS_ATTACH:
+        DisableThreadLibraryCalls(hinstDLL);
+
+        if (!AllocConsole())
+        {
+            printf("Failed to allocate console\n");
+            return FALSE; // If console allocation fails, return early.
+        }
+        const HANDLE out = GetStdHandle(STDOUT_FILENO);
+        freopen("CONOUT$", "w", stdout);
+        printf("DLL_PROCESS_ATTACH started\n");
+        OutputDebugString("hi\n");
+
         VMInstanceRef vm = NULL;
         uint8_t *fakestack = NULL;
 
@@ -46,13 +61,19 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, // handle to DLL module
         bool res = qbdi_allocateVirtualStack(state, STACK_SIZE, &fakestack);
         assert(res == true);
 
+        const HANDLE moduleBase = GetModuleHandle("Notepad.exe");
+        printf("Module base: %p", moduleBase);
+
         // Add callback on our instruction range
+        // uint32_t uid =
+        //     qbdi_addCodeRangeCB(vm, (rword)&moduleBase, (rword)&moduleBase + 0x1000, QBDI_PREINST, showInstruction, vm, 0);
         uint32_t uid =
-            qbdi_addCodeRangeCB(vm, (rword)&secretFunc, (rword)&secretFunc + 100, QBDI_PREINST, showInstruction, vm, 0);
+            qbdi_addMemRangeCB(vm, (rword)&moduleBase, (rword)&moduleBase + 0x1000, QBDI_PREINST, showInstruction, vm);
+
         assert(uid != QBDI_INVALID_EVENTID);
 
         // add executable code range
-        res = qbdi_addInstrumentedModuleFromAddr(vm, (rword)&DllMain);
+        res = qbdi_addInstrumentedModuleFromAddr(vm, (rword)&moduleBase);
         assert(res == true);
 
         // call secretFunc using VM, custom state and fake stack

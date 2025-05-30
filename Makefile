@@ -17,3 +17,5 @@ build_dll:
 
 clean:
 	rm -rf bin
+
+# https://bitbucket.org/evolution536/crysearch-memory-scanner/src/e4e11f4dd485f7d9e722da1ca3838a626c46497b/ModuleManager.cpp?at=master&fileviewer=file-view-default
