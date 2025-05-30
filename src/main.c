@@ -1,5 +1,6 @@
 // needs mingw64-gcc package. and clang + clang extra tools for clangd
 
+#include "QBDI/VM_C.h"
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -8,8 +9,14 @@
 
 #define STACK_SIZE 0x100000
 
+void saySomething(const char *str)
+{
+    printf("%s", str);
+}
+
 QBDI_NOINLINE int secretFunc(unsigned int value)
 {
+    saySomething("hello");
     return value ^ 0x5c;
 }
 
@@ -21,6 +28,7 @@ VMAction showInstruction(VMInstanceRef vm, GPRState *gprState, FPRState *fprStat
     printf("0x%" PRIRWORD ": %s\n", instAnalysis->address, instAnalysis->disassembly);
     return QBDI_CONTINUE;
 }
+
 
 int main(int argc, char **argv)
 {
