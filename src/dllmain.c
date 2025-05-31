@@ -44,7 +44,6 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, // handle to DLL module
         const HANDLE out = GetStdHandle(STDOUT_FILENO);
         freopen("CONOUT$", "w", stdout);
         printf("DLL_PROCESS_ATTACH started\n");
-        OutputDebugString("hi\n");
 
         VMInstanceRef vm = NULL;
         uint8_t *fakestack = NULL;
