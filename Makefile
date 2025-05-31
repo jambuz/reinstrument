@@ -10,7 +10,7 @@ build:
 	$(CC) $(CFLAGS) $(INCLUDES) $(LIBS) -o bin/main.exe src/main.c
 	@cp lib/QBDI.dll bin/QBDI.dll
 
-build_dll:
+build-dll:
 	mkdir -p bin
 	$(CC) $(CFLAGS) -shared $(INCLUDES) $(LIBS) -o bin/main.dll src/dllmain.c
 	@cp lib/QBDI.dll bin/QBDI.dll
